@@ -29,7 +29,7 @@ const productSchema = new mongoose.Schema({
         required: true, 
     },
    
-    stock: { type: Number, default: 0 },
+    stock: { type: Boolean, default: false },
    
     ratings:{
          type: Number,

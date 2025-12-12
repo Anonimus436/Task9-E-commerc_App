@@ -6,6 +6,13 @@ const Auth = require("../models/Auth")
 
 class SuperAdminController {
     
+    async AddCategory (req , res){
+        const{name , description} = req.body ;
+        const addcategory = await Category.create({name , description});
+        return res.status(201).json({Success : true , data : addcategory})
+        }
+   
+
     async deleteUser(req, res) {
         
             const { id } = req.params;

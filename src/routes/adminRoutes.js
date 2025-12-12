@@ -5,6 +5,9 @@ const {addNewUserValidation , getByIdValidate} = require("../validation/userVali
 const {requireAuth ,    auhtorize} = require("../middlewares/auth") ;
 const asyncHandler = require("../utils/asyncHandler")
 
+//POST
+router.post("/addcategory" , [requireAuth , auhtorize("superadmin")] , asyncHandler(adminController.AddCategory));
+
 // DELETE 
 router.delete("/deleteuser/:id" , [getByIdValidate , requireAuth ,    auhtorize("superadmin")] , asyncHandler(adminController.deleteUser))
 router.delete("/deleteauth/:id" , [getByIdValidate , requireAuth ,    auhtorize("superadmin")] , asyncHandler(adminController.deletAuth))
