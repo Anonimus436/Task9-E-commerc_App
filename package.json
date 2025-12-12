@@ -5,7 +5,8 @@
   "main": "./src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "nodemon ./src/app.js"
+    "watch": "nodemon ./src/app.js" ,
+    "admin:seed" : "nodemon ./src/scripts/createAdmin.js"
   },
   "keywords": [],
   "author": "",
