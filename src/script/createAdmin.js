@@ -1,5 +1,5 @@
 require("dotenv").config();
-const User = require("../models/User");
+const Auth = require("../models/Auth");
 const connectDB = require("../utils/connectDB")
 const passwordService = require("../utils/passwordUtils") ;
 
@@ -13,15 +13,13 @@ const createAdminUser = async () => {
        name: process.env.SUPERADMIN_NAME ,
        role : "superadmin" ,
        isVerified : true ,
-       phone : process.env.SUPERADMIN_PHONE ,
-       addresses : process.env.SUPERADMIN_ADDRESS 
     }
-    const existedAdmin = await User.findOne({role : "superadmin"}) ;
+    const existedAdmin = await Auth.findOne({role : "superadmin"}) ;
     if(existedAdmin){
         console.error("Admin is already exist");
         process.exit(1);
     }
-    await User.create({
+    await Auth.create({
         ...adminData ,
         password : await passwordService.hashPassword(adminData.password)
     })
