@@ -1,9 +1,9 @@
-const User = require("../models/User");
 const cookieService = require("../utils/cookies");
 const passwordService = require("../utils/passwordUtils");
 const tokenService = require("../utils/generateToken");
 const UrlToken = require("../models/Token");
-const sendmail = require("../utils/sendEmail") ;
+const generateResetToken =  require("../utils/generateResetToken")
+const Auth = require("../models/Auth")
 
 class AuthController {
 
@@ -32,11 +32,11 @@ class AuthController {
       await user.save();
     }
 
-    async register(req, res) {
+   async register(req, res) {
+        
+            const { name, email , password } = req.body;
 
-            const { name, email, password } = req.body;
-
-            const existEmail = await User.findOne({ email })
+            const existEmail = await Auth.findOne({email})
 
             if(existEmail) {
                 return res.status(400).json({ message: "Your Email Already Exist" })
@@ -51,19 +51,19 @@ class AuthController {
 
             const hashed = await passwordService.hashPassword(password);
 
-            await User.create({ email, name, password: hashed });
+            await Auth.create({ email, name, password: hashed });
 
-            return res.status(200).json({ 
-                message: "Signed Up Successfully"
+            return res.status(201).json({ 
+            success : true , message: "Signed Up Successfully"
             })
-        
     }
 
+    
    login = async (req, res) => {
         
             const { email, password } = req.body
 
-            const existEmail = await User.findOne({ email })
+            const existEmail = await Auth.findOne({ email })
 
             if(!existEmail) {
                 return res.status(404).json({ message: "Failed Login" })
@@ -121,7 +121,6 @@ class AuthController {
     async logout(req, res) {
        
             cookieService.clearTokens(res);
-
             return res.status(200).json({ message: "Logged Out Successfuly" });
         
     }
@@ -158,23 +157,51 @@ class AuthController {
         
     }
 
+
+
     async askToUpdatePassword(req, res) {
-        const userId = req.user.id;
-        const email = req.user.email;
+    const userId = req.user.id;
+    const email = req.user.email;
 
-        const token = (Math.random() * 1e9) + ("ABC");
+    // Use the generateResetToken function to generate the security token
+    const { resetToken, hashedResetToken, resetTokenExpire } = generateResetToken();
 
-        await UrlToken.create({ user: userId, token });
-        /* await sendMessage({ 
-            from: "", 
-            to: email, 
-            subject: "Update Password", 
-            text: `This is the <a href=''>http://localhost:3000/api/v1/auth/verify/${token}</a>`
-        }) */
-        console.log(`http://localhost:3000/api/v1/auth/verify/${token}`);
+    // Save the encrypted version and expiration time in the database
+    await UrlToken.create({ 
+        user: userId, 
+        token: hashedResetToken,  // Store the encrypted version
+        expiresAt: new Date(resetTokenExpire) // Store expiration time
+    }) ;
 
-        res.status(200).json({ success: true, message: "Sent email successfully" });
-    }
+    const verificationURL = `http://localhost:3000/api/v1/auth/verify/${resetToken}`;
+    const message = `${verificationURL}\. click to this URL this Token will close in 10 minutes`;
+
+    // await sendMessage({ 
+    //     from: "smpt", 
+    //     to: email , 
+    //     subject: `This is the <a href=''>http://localhost:3000/api/v1/auth/verify/${token}</a>`, 
+    //     text: message
+    // }); 
+    
+    console.log(`Verification URL: ${verificationURL}`); // For testing and correction purposes
+      console.log("http://localhost:3000/api/v1/auth/verify/${token}")
+    res.status(200).json({ success: true, message: " send Email Successfully ."});
+}
+
+
+// async AskToUpdatePassword(req ,res){
+//         const user = req.user.id ;
+//         const email = req.user.email ;
+//         const token = (Math.random() * 1e9) + ("ABC") ;
+//         // await sendMessage({
+//         //     from : " " ,
+//         //     to : email ,
+//         //     supject : " Update Password " ,
+//         //     text : " This is the <a href = ' '>http://localhost:3000/api/v1/auth/verify/${token}</a> "
+//         // }) نعلق هذا الجزء كونه غير مربوط بسيرفر
+//         console.log("http://localhost:3000/api/v1/auth/verify/${token}")
+//         res.status(200).json({Success: true , message : "sent email successfully"})
+//     }
 
     async verifyToUpdatePassword(req, res) {
         const token = req.params.token;
@@ -188,23 +215,24 @@ class AuthController {
         }
 
         // knowing the user who ask to update the password
-        await User.findByIdAndUpdate(isExist.user, { isVerifiedToUpdate: true });
+        await Auth.findByIdAndUpdate(isExist.user, { isVerifiedToUpdate: true });
 
         res.status(200).json({ success: true, message: "Verifing Successfully" });
     }
+
 
     async updatePassword(req, res) {
         const { password } = req.body;
         const { id } = req.user;
 
-        const isExist = await User.findOne({ _id: id, isVerifiedToUpdate: true });
+        const isExist = await Auth.findOne({ _id: id , isVerifiedToUpdate: true });
 
         if(!isExist) {
             throw new Error("You Can Not Make this Action");
         }
 
-        await User.findByIdAndUpdate(id, { 
-            password: await passwordService.hashPassword(password),
+        await Auth.findByIdAndUpdate(id, { 
+            password : await passwordService.hashPassword(password),
             isVerifiedToUpdate: false
         });
 

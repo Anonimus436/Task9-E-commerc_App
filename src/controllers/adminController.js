@@ -1,56 +1,30 @@
-const {User , Address} = require("../models/User");
+const {User , Address}  = require("../models/User");
 const Product = require("../models/Product");
 const Category = require("../models/Category");
-const {Cart , Cartitem} = require("../models/Cart");
+const {Cart , Cartitem}  = require("../models/Cart");
+const Auth = require("../models/Auth")
 
 class SuperAdminController {
     
-     async addUser(req, res) {
-            const { name, password, email, addresses , role , avatar , phone } = req.body;
-
-            const adduser = await User.create( { name, password, email, addresses , role , avatar , phone });
-
-            return res.status(201).json({
-                success: true,
-                data: adduser
-            });
-    }
-
-
     async deleteUser(req, res) {
         
             const { id } = req.params;
-
-            await User.findByIdAndDelete(id);
-
+            const deleteusernre =  await User.findByIdAndDelete(id);
             return res.status(200).json({
-                message: "Deleted User Successfully",
+                message: "Deleted User Successfully", data : deleteusernre
             })
-        
     }
      
-    
-     async AddCategory(req, res) {
 
-                         const { id } = req.params;
-                         const addcategoryproduct = await Product.findById(id);
-             
-                         if(!addcategoryproduct) {
-                             return res.status(404).json({
-                                 success: false,
-                                 data: null,
-                             });
-                         }
-         
-                         const  {name , description , images} = req.body;
-                         const addcategory = await Category.create({name , description , images});
-              
-                        return res.status(201).json({
-                         success: true,
-                         data: addcategory
-                          });
-                  
-            }
-     
+    async deletAuth(req , res){
+         const { id } = req.params;
+
+       const removeUser =  await Auth.findByIdAndDelete(id);
+
+            return res.status(200).json({
+                message: "Deleted User completely Successfully", data : removeUser 
+            })
+    }    
+
 }
 module.exports = new SuperAdminController() ;

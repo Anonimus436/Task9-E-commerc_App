@@ -50,7 +50,7 @@ app.use(cors ({
 app.use(apiLimiter);
 
 // Authentication Endpoints
-app.use(" /api/auth", require("./routes/authRoutes"));
+app.use("/api/auth", require("./routes/authRoutes"));
 
 //  Product Endpoints
 app.use("/api/products", require("./routes/productRoutes"));
@@ -66,6 +66,9 @@ app.use("/api/reviews", require("./routes/reviewRoutes"));
 
 // User Endpoints
 app.use("/api/users ", require("./routes/userRoutes"));
+
+// SuperAdmin Endpoints
+app.use("/api/Admin" , require("./routes/adminRoutes"));
 
 // Error Middleware
 app.use(require("./middlewares/errorMiddleware"));

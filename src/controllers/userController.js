@@ -1,6 +1,18 @@
 const {User , Address} = require("../models/User");
+const Auth = require("../models/Auth");
 
  class UserController{
+
+       async addUser(req, res) {
+                  const { AuthId , avatar , phone } = req.body;
+                  
+                  const adduser = await User.create( { Auth : AuthId ,  avatar , phone });
+      
+                  return res.status(201).json({
+                      success: true,
+                      data: adduser
+                  });
+          }
 
       async showAll(req, res) {
             const users = await User.find()

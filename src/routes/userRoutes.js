@@ -8,6 +8,8 @@ const asyncHandler = require("../utils/asyncHandler")
 router.get("/profile" , [getByIdValidate] , asyncHandler(userController.showById)) ;
 router.get("/admin/all" , [requireAuth ,    auhtorize("superadmin")] , asyncHandler(userController.showAll));
 
+//POST
+router.post("/adduser" , asyncHandler(userController.addUser)); 
 
 // PUT 
 router.put("/profile" , [addNewUserValidation] , asyncHandler(userController.update)) ;

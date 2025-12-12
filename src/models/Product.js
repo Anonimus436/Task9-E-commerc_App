@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Category = require("./Category");
+const paginatePlugin = require("../utils/apiFeatures");
+
 const productSchema = new mongoose.Schema({
     // Basic
     name: {
@@ -47,6 +49,8 @@ const productSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+productSchema.plugin(paginatePlugin) ;
 
 const Product = mongoose.model("Product", productSchema) // collection
 

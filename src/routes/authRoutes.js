@@ -5,6 +5,7 @@ const {requireAuth , auhtorize} = require("../middlewares/auth");
 const {loginLimiter} = require("../middlewares/rateLimitMiddleware") ;
 const {addNewAuthValidation} = require("../validation/authValidation") ;
 const asyncHandler = require("../utils/asyncHandler") ;
+
 // POST 
 router.post("/register" , [addNewAuthValidation] , asyncHandler(authController.register) )
 router.post("/login" , [loginLimiter , addNewAuthValidation] , asyncHandler(authController.login))

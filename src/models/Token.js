@@ -13,10 +13,6 @@ const tokenSchema = new mongoose.Schema({
       required : true 
     },
     
-    type : {
-      type : String ,
-      required : true 
-    },
     
     expiresAt : Date ,
     

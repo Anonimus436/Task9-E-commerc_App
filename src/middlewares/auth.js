@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const Auth = require("../models/Auth");
 const cookieService = require("../utils/cookies");
 const tokenService = require("../utils/generateToken");
 
@@ -15,7 +15,7 @@ const requireAuth = async (req, res, next) => {
         const decoded = tokenService.verifyAccessToken(token)        
 
         // decoded the token to get user details
-        const user = await User.findById(decoded.id);
+        const user = await Auth.findById(decoded.id);
 
         if(!user) {
             return res.status(401).json({ message: "User no longer exist" });

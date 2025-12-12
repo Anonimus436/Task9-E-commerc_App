@@ -2,10 +2,13 @@ const Product = require("../models/Product");
 const Category = require("../models/Category")
 const uploadToCloudinary = require("../utils/cloudinary");
 
+
 class ProductsController {
     async showAll(req, res) {
-       
-            const products = await Product.find();
+            
+            const page = +req.query.page || 1;
+            const products = await Product.paginate({page})
+            .execPaginate();
 
             return res.status(200).json({
                 success: true,
@@ -54,7 +57,9 @@ async addProductWithImageByMulter(req, res) {
 
         const imageUrl = await uploadLocalByMulter(req, res);
 
-        const { name, description, price, features, brand, numReviews } = req.body;
+        const { name, description, price, features, brand, numReviews  , category} = req.body;
+        
+        const {categoryId} = req.body ;
 
         const product = await Product.create({ 
             name, 
@@ -63,6 +68,7 @@ async addProductWithImageByMulter(req, res) {
             images: [imageUrl], 
             features, 
             brand, 
+            category : categoryId ,
             numReviews 
         });
 
@@ -85,7 +91,8 @@ async addProductWithImageByMulter(req, res) {
 async addProductWithImageByCloudinary(req, res) {
         const imageUrl = await uploadCloudByCloudinary(req, res);
 
-        const { name, description, price, features, brand, numReviews } = req.body;
+        const { name, description, price, features, brand, numReviews , category } = req.body;
+         const {categoryId} = req.body ;
 
         const product = await Product.create({
             name,
@@ -94,6 +101,7 @@ async addProductWithImageByCloudinary(req, res) {
             images: [imageUrl], 
             features,
             brand,
+            category : categoryId ,
             numReviews
         });
 
