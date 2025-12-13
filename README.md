@@ -147,3 +147,5 @@ PUT    /api/users/:id/role    - Update user role (Admin only)
 ├── .gitignore
 └── README.md
 
+## Postman URL :
+- https://documenter.getpostman.com/view/49722654/2sB3dTrnCY

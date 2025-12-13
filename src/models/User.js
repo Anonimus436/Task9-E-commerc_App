@@ -38,17 +38,24 @@ const Address = mongoose.model("Address", addressSchema) // collection
 const userSchema = new mongoose.Schema({
     // Basic
    
-    Auth : [{
+    AuthUser : [{
         type : mongoose.Schema.Types.ObjectId ,
         ref : "Auth"
     }] ,
 
-    avatar : [String] ,
+    avatar :{
+        type : String
+    },
     
     phone : {
         type : Number ,
         unique : true
-    }
+    } ,
+    
+    address : [{
+        type : mongoose.Schema.Types.ObjectId ,
+        ref : "Address"
+    }]
 
 }, {
     timestamps: true

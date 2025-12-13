@@ -14,6 +14,7 @@ router.get("/categories" , asyncHandler(productController.showAllCategory));
 // POST 
 router.post("/local" , [requireAuth , auhtorize("superadmin") , addNewProductValidation , uploadLocal.single("image"),] , asyncHandler(productController.addProductWithImageByMulter));
 router.post("/cloud" , [requireAuth , auhtorize("superadmin") , addNewProductValidation ,  multer().single("image"),] , asyncHandler(productController.addProductWithImageByCloudinary));
+router.post("/categoryToProduct" , [requireAuth , auhtorize("superadmin")] , asyncHandler(productController.addCategoryToProduct));
 
 // PUT 
 router.put("/:id" , [requireAuth , auhtorize("superadmin") , addNewProductValidation , getByIdValidate] , asyncHandler (productController.update));

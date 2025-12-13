@@ -35,15 +35,40 @@ async  createOrder(req, res) {
       totalPrice
     });
 
-    await sendMessage({
-      from: "",
-      to: req.user.email,
-      subject: "Order Confirmation",
-      text: `Your order has been created successfully. Order ID: ${order.id}`
-    });
+    // await sendMessage({
+    //   from: "",
+    //   to: req.user.email,
+    //   subject: "Order Confirmation",
+    //   text: `Your order has been created successfully. Order ID: ${order.id}`
+    // });
 
     res.status(201).json({ success: true, order });
 }
+
+async addUserOrder(req , res){
+    const{id} = req.params ;
+    const checkUserOrder = await Order.findById(id);
+    if(!checkUserOrder){
+        return res.status(201).json({Success : false , data : null})
+    }
+    const {userId} = req.body ;
+    checkUserOrder.user = [...checkUserOrder.user , userId]
+    await checkUserOrder.save();
+    return res.status(201).json({Success : true , data : checkUserOrder})
+}
+
+async addProductItemOrder(req , res){
+    const{id} = req.params ;
+    const checkProductOrder = await OrderItem.findById(id);
+    if(!checkProductOrder){
+        return res.status(201).json({Success : false , data : null})
+    }
+    const {productorederId} = req.body ;
+    checkProductOrder.user = [...checkProductOrder.user , productorederId]
+    await checkProductOrder.save();
+    return res.status(201).json({Success : true , data : checkProductOrder})
+}
+
 
 async getUserOrders(req, res) {
     const {id} = req.params;

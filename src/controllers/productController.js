@@ -20,7 +20,6 @@ class ProductsController {
 
     async showAllCategory(req, res) {
             const findcategory = await Category.find();
-
             return res.status(200).json({
                 success: true,
                 data: findcategory
@@ -57,7 +56,7 @@ async addProductWithImageByMulter(req, res) {
 
         const imageUrl = await uploadLocalByMulter(req, res);
 
-        const { name, description, price, features, brand, numReviews  , category} = req.body;
+        const { name, description, price, features, brand, numReviews } = req.body;
         
         const {categoryId} = req.body ;
 
@@ -91,7 +90,7 @@ async addProductWithImageByMulter(req, res) {
 async addProductWithImageByCloudinary(req, res) {
         const imageUrl = await uploadCloudByCloudinary(req, res);
 
-        const { name, description, price, features, brand, numReviews , category } = req.body;
+        const { name, description, price, features, brand, numReviews } = req.body;
          const {categoryId} = req.body ;
 
         const product = await Product.create({
@@ -110,7 +109,18 @@ async addProductWithImageByCloudinary(req, res) {
             data: product
         });
 }
-
+    
+   async addCategoryToProduct (req , res){
+    const {id} = req.params ;
+    const catpro = await Product.findById(id);
+    if(!catpro){
+        return res.status(400).json({Success : true , data : null})
+    }
+    const {categoryId} = req.body ;
+    catpro.category = [...catpro.category , categoryId]
+    await catpro.save();
+    return res.status(200).json({Success : true , data : catpro})
+   }
 
     async update(req, res) {
             const { id } = req.params;

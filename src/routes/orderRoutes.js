@@ -12,6 +12,10 @@ router.get("/:id" , asyncHandler(orderController.getUserOrders) );
 router.get("/:id" , asyncHandler(orderController.getOrderById));
 router.get("/admin/all" , [requireAuth , auhtorize("superadmin")] , asyncHandler(orderController.getAllOrders));
 
+//POST
+router.post("/addUserOrder/:id" , asyncHandler(orderController.addUserOrder) );
+router.post("/addProductOrder/:id" , asyncHandler(orderController.addProductItemOrder) );
+
 // PUT 
 router.put("/:id/status" , [requireAuth , auhtorize("superadmin")] , asyncHandler(orderController.updateOrderStatus) ) ;
 

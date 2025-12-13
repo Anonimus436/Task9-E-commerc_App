@@ -1,18 +1,29 @@
 const {User , Address} = require("../models/User");
-const Auth = require("../models/Auth");
+// const Auth = require("../models/Auth");
 
  class UserController{
 
        async addUser(req, res) {
-                  const { AuthId , avatar , phone } = req.body;
-                  
-                  const adduser = await User.create( { Auth : AuthId ,  avatar , phone });
-      
+                  const { avatar , phone } = req.body;
+                  const adduser = await User.create( { avatar , phone });
                   return res.status(201).json({
                       success: true,
                       data: adduser
                   });
           }
+
+        async addAuthUserAndAddress(req , res){
+            const {id} = req.params ;
+            const userId = await User.findById(id);
+            if(!userId){
+                return res.status(400).json({Success : false , data : null})
+            }
+            const {AuthId , AddressId} = req.body ;
+            userId.AuthUser = [...userId.AuthUser , AuthId];
+            userId.address = [...userId.address , AddressId] ;
+            await userId.save();
+            return res.status(201).json({message : "Auth And Adderss Add Successfully" , data : userId})
+        }
 
       async showAll(req, res) {
             const users = await User.find()
@@ -25,7 +36,6 @@ const Auth = require("../models/Auth");
 
     async showById(req, res) {
             const { id } = req.params;
-
             const users = await User.findById(id)
                 
             return res.status(200).json({
@@ -38,7 +48,7 @@ const Auth = require("../models/Auth");
      async update(req, res) {
                 const { id } = req.params;
     
-                const  { name, password, email , avatar , phone } = req.body;
+                const  {avatar , phone } = req.body;
     
                 const updateuser = await User.findById(id);
     
@@ -51,7 +61,7 @@ const Auth = require("../models/Auth");
     
                 const newupdate = await User.findByIdAndUpdate(
                     id, 
-                     { name, password, email , avatar , phone },
+                     {  avatar , phone },
                     { new: true }
                 );
     
@@ -62,10 +72,34 @@ const Auth = require("../models/Auth");
             
         }
     
+         async updateAuthAndAddress(req, res) {
+                const { id } = req.params;
+    
+                const  {AuthId , AddressId } = req.body;
+    
+                const updateuser = await User.findById(id);
+    
+                if(!updateuser) {
+                    return res.status(404).json({
+                        success: false,
+                        data: null,
+                    });
+                }
+                
+               updateuser.AuthUser = [...updateuser.AuthUser , AuthId];
+               updateuser.address = [...updateuser.address , AddressId];
+
+                return res.status(200).json({
+                    success: true,
+                    data: updateuser
+                });
+            
+        }
+
         
         async changeRole(req , res) {
             const {id} = req.params ;
-            const userrole = await User.findById(id)
+            const userrole = await Auth.findById(id)
             if(!userrole){
                return res.status(404).json({success : false , user : null})
             }
@@ -75,28 +109,26 @@ const Auth = require("../models/Auth");
         }
     
 
-         async AddAddress(req, res) {
-                const { id } = req.params;
-    
-                const updateUserAddress = await User.findById(id);
-    
-                if(!updateUserAddress) {
-                    return res.status(404).json({
-                        success: false,
-                        data: null,
-                    });
-                }
-    
- 
+         async createAddress(req, res) {
                 const  {street , city , state , zipCode , country } = req.body;
- 
                 const addadress = await Address.create( {street , city , state , zipCode , country });
-     
                return res.status(201).json({
                 success: true,
                 data: addadress
                  });
             }
+
+        async AddAdress (req, res){
+            const{id} = req.params ;
+            const checkuser = await User.findById(id);
+            if(!checkuser){
+                return res.status(400).json({success : false , data : null})
+            }
+            const {addressId} = req.body ;
+            checkuser.address = [...checkuser.address , addressId];
+            await checkuser.save();
+            return res.status(201).json({success : true , data : checkuser})
+        }
 
 
  }

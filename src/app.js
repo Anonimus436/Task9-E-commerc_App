@@ -65,7 +65,7 @@ app.use("/api/orders", require("./routes/orderRoutes"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 
 // User Endpoints
-app.use("/api/users ", require("./routes/userRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
 
 // SuperAdmin Endpoints
 app.use("/api/Admin" , require("./routes/adminRoutes"));

@@ -20,24 +20,29 @@ uploadLocalByMulter = async (req, res) => {
 
 addReviewWithImagesByMulter = async (req, res) => {
     const imageUrl1 = await uploadLocalByMulter(req, res);
-    const { rating, comment, productId, userId } = req.body; 
-    const { id } = req.params; 
-   const userReview = await User.findById(userId)
-    const product = await Product.findById(id);
-    if (!product) {
-        return res.status(400).json({ Success: false, message: 'Product not found' });
-    }
+    const { rating, comment } = req.body; 
 
     const review = await Review.create({
         rating,
         comment,
-        product: productId,
-        user: userReview._id ,
         images : [imageUrl1] 
     });
 
     res.status(201).json({ Success: true, review });
 };
+
+async addUserReview(req , res){
+    const{id} = req.params ;
+    const checkUserReview = await Review.findById(id);
+    if(!checkUserReview){
+        return res.status(201).json({Success : false , data : null})
+    }
+    const {userId , productId} = req.body ;
+    checkUserReview.user = [...checkUserReview.user , userId]
+    checkUserReview.product = [...checkUserReview.product , productId]
+    await checkUserReview.save();
+    return res.status(201).json({Success : true , data : checkUserReview})
+}
 
 
 uploadCloudByCloudinary = async (req, res) => {
@@ -92,12 +97,7 @@ getProductReview = async (req, res) => {
 
 updateProductReview = async (req, res) => {
     const { id } = req.params;
-    const { rating, comment, userId } = req.body;
-
-    const userReview = await User.findById(userId);
-        if (!userReview) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
+    const { rating, comment } = req.body;
 
         const review = await Review.findById(reviewId);
         if (!review) {
@@ -106,7 +106,7 @@ updateProductReview = async (req, res) => {
 
         const updatedReview = await Review.findByIdAndUpdate(
             id ,
-            { rating, comment, user: userReview._id },
+            { rating, comment},
             { new: true }
         );
 

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "nodemon ./src/app.js" ,
-    "admin:seed" : "nodemon ./src/scripts/createAdmin.js"
+    "admin:seed" : "node ./src/script/createAdmin.js"
   },
   "keywords": [],
   "author": "",

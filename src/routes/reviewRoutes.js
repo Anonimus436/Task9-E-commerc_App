@@ -6,6 +6,7 @@ const asyncHandler = require("../utils/asyncHandler");
 // POST 
 router.post("/:id/addreviews/imagelocal" , asyncHandler(reviewController.addReviewWithImagesByMulter) );
 router.post("/:id/addreviews/imagecloud" , asyncHandler(reviewController.addReviewWithimagesByCloudinary) );
+router.post("/:id/adduserreviews/:id" , asyncHandler(reviewController.addUserReview));
 
 // GET 
 router.get("/:productId/getreviews" , asyncHandler(reviewController.getProductReview) ) ;

@@ -1,6 +1,7 @@
 const {Cart , Cartitem} = require("../models/Cart");
 const Product = require("../models/Product");
 const {User , Address} = require("../models/User");
+const { addReviewWithimagesByCloudinary } = require("./reviewController");
 
 class CategoryController {
     
@@ -11,7 +12,6 @@ class CategoryController {
                      return res.status(200).json({Success : false , data : null})
                 }
                 return res.status(200).json({Success : true , data : cartcheck})
-               await this.createTotalPriceCart() ;
         }
 
    async addusercart(req, res) {
@@ -42,9 +42,9 @@ class CategoryController {
 
 
        async createitemcart(req, res) {
-           const { quantity, price, addproductId } = req.body;
+           const { quantity, price } = req.body;
 
-           const newItem = await Cartitem.create({ quantity, price, product: [addproductId] });
+           const newItem = await Cartitem.create({ quantity, price});
 
            return res.status(201).json({
                success: true,
@@ -52,9 +52,20 @@ class CategoryController {
            });
         }
 
-
-
-              async createTotalPriceCart() {
+ 
+        async addProductTitemCart (req , res){
+            const{id} = req.params;
+            const procart = await Cartitem.findById(id);
+            if(!procart){
+                return res.status(400).json({Success : false , Data : null})
+            }
+            const {cateitemId} = req.body ;
+            procart.product = [...procart.product , cateitemId] ;
+            await procart.save();
+            return res.status(200).json({Success : true , data : procart})
+        }
+        
+             async createTotalPriceCart(req , res) {
         
                const cartItems = await Cartitem.find().select("price");
         
@@ -70,7 +81,7 @@ class CategoryController {
         
                await cart.save();
         
-                return cart;
+                return res.status(200).json({message : "get total price successfully"})
           }
         
        
@@ -103,7 +114,7 @@ class CategoryController {
 
         async update(req, res) {
            const { id } = req.params;
-           const { quantity, price, addproductId } = req.body;
+           const { quantity, price } = req.body;
 
            const searchItem = await Cartitem.findById(id);
            if (!searchItem) {
@@ -117,7 +128,6 @@ class CategoryController {
             const updatedItem = await Cartitem.findByIdAndUpdate(
              id,
             {
-            product: addproductId , 
             quantity: quantity,  
             price: price, 
             },
@@ -130,6 +140,8 @@ class CategoryController {
            });
     }
 
+
+    
             async removeItemFCart(req, res) {
                  const { id } = req.params; 
                  const { cartitemId } = req.body; 

@@ -6,11 +6,11 @@ const orderItemSchema = new mongoose.Schema({
         type: String,
         required: [true, "name is required"]
     },
-    product: {
+    product: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
         required: true 
-    },
+    }],
     quantity: {
         type: Number, 
         required: [true, "quantity is Required"],

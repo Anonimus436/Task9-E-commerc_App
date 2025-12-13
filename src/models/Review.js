@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const reviewSchema = new mongoose.Schema({
     // Basic
-   user: [String], 
+   user: [{type : mongoose.Schema.Types.ObjectId , ref : "Product"}] , 
 
-    product: [String],
+    product: [{type : mongoose.Schema.Types.ObjectId , ref : "User"}],
 
     rating: {
        type : Number ,
